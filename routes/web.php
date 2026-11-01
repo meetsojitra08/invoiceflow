@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AiInvoiceController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanySwitchController;
 use App\Http\Controllers\DashboardController;
@@ -46,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
     Route::post('invoices/calculate', [InvoiceController::class, 'calculate'])->name('invoices.calculate');
+    Route::post('invoices/ai-draft', AiInvoiceController::class)->name('invoices.ai-draft');
     Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send'])->name('invoices.send');
     Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])->name('invoices.void');
     Route::post('invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->name('invoices.duplicate');

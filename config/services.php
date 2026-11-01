@@ -41,4 +41,11 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    'ai' => [
+        'api_key' => env('AI_API_KEY', ''),
+        'model' => env('AI_MODEL', 'gemini-1.5-flash'),
+        'endpoint' => env('AI_ENDPOINT', 'https://generativelanguage.googleapis.com/v1beta/models'),
+        'daily_cap' => (int) env('AI_DAILY_CAP', 50),
+    ],
+
 ];

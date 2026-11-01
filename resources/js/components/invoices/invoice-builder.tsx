@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Sparkles, Trash2 } from 'lucide-react';
 import PageHeader from '@/components/shared/page-header';
 import MoneyInput from '@/components/shared/money-input';
 import Money from '@/components/shared/money';
@@ -8,6 +8,16 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import {
     Select,
     SelectContent,
@@ -49,8 +59,15 @@ export default function InvoiceBuilder({
     defaultDueDate = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
     mode,
 }: Props) {
-    const { auth } = usePage<{ auth: Auth }>().props;
+    const { auth, features } = usePage<{ auth: Auth; features?: { ai?: boolean } }>().props;
+    const aiEnabled = features?.ai ?? true;
     const currency = invoice?.currency || auth.company?.currency || 'INR';
+
+    const [showAiModal, setShowAiModal] = useState(false);
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+    const [aiError, setAiError] = useState<string | null>(null);
+    const [isAiDraft, setIsAiDraft] = useState(false);
 
     const initialItems: BuilderItem[] = invoice?.items && invoice.items.length > 0
         ? invoice.items.map((item, i) => ({
@@ -186,6 +203,67 @@ export default function InvoiceBuilder({
         setData('items', next);
     };
 
+    const handleGenerateAiDraft = async () => {
+        if (!aiPrompt.trim()) return;
+        setIsGeneratingAi(true);
+        setAiError(null);
+
+        try {
+            const res = await fetch('/invoices/ai-draft', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ prompt: aiPrompt }),
+            });
+
+            const json = await res.json();
+            if (!res.ok || !json.success) {
+                setAiError(json.message || 'Could not understand the invoice details. Please try rephrasing.');
+                setIsGeneratingAi(false);
+                return;
+            }
+
+            const draft = json.draft;
+            if (draft.client_id) {
+                setData('client_id', String(draft.client_id));
+            }
+            if (draft.issue_date) {
+                setData('issue_date', draft.issue_date);
+            }
+            if (draft.due_date) {
+                setData('due_date', draft.due_date);
+            }
+            if (draft.notes) {
+                setData('notes', draft.notes);
+            }
+            if (Array.isArray(draft.items) && draft.items.length > 0) {
+                const newItems: BuilderItem[] = draft.items.map((it: any, idx: number) => ({
+                    rowId: `ai-item-${idx}-${Math.random().toString(36).substr(2, 9)}`,
+                    product_id: '',
+                    description: it.description || '',
+                    quantity: Number(it.quantity) || 1,
+                    unit_price: Number(it.unit_price) || 0,
+                    tax_rate: Number(it.tax_rate) || 0,
+                    discount: Number(it.discount) || 0,
+                    line_total: 0,
+                }));
+                setData('items', newItems);
+            }
+
+            setIsAiDraft(true);
+            setShowAiModal(false);
+            setAiPrompt('');
+        } catch (err: any) {
+            setAiError('Failed to communicate with the AI assistant. Please try again.');
+        } finally {
+            setIsGeneratingAi(false);
+        }
+    };
+
     const handleSubmit = (actionType: 'save' | 'send') => {
         data.action = actionType;
         if (mode === 'create') {
@@ -206,6 +284,19 @@ export default function InvoiceBuilder({
                         ? 'Draft a new customer invoice with line items and automatic totals.'
                         : 'Update line items, dates, and notes for this draft invoice.'
                 }
+                action={
+                    mode === 'create' && aiEnabled ? (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowAiModal(true)}
+                            className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-950/50"
+                        >
+                            <Sparkles className="mr-1.5 h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                            Create with AI
+                        </Button>
+                    ) : undefined
+                }
                 breadcrumbs={
                     <Link
                         href="/invoices"
@@ -216,6 +307,24 @@ export default function InvoiceBuilder({
                     </Link>
                 }
             />
+
+            {/* AI Draft Banner */}
+            {isAiDraft && (
+                <div className="rounded-lg border border-indigo-200 bg-indigo-50/70 p-4 dark:border-indigo-900/50 dark:bg-indigo-950/30 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-300">
+                        <Sparkles className="w-5 h-5 shrink-0" />
+                        <div>
+                            <span className="font-semibold text-sm">AI draft: review before saving.</span>
+                            <p className="text-xs text-indigo-600/80 dark:text-indigo-400/80">
+                                Generated draft loaded. Verify client, items, taxes, and amounts before saving.
+                            </p>
+                        </div>
+                    </div>
+                    <Badge variant="outline" className="border-indigo-400 text-indigo-700 dark:text-indigo-300">
+                        Unsaved Draft
+                    </Badge>
+                </div>
+            )}
 
             <div className="space-y-6">
                 {/* Header Information Card */}
@@ -499,6 +608,71 @@ export default function InvoiceBuilder({
                     </div>
                 </div>
             </div>
+
+            {/* Create with AI Dialog */}
+            <Dialog open={showAiModal} onOpenChange={setShowAiModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-indigo-600" />
+                            Create Invoice with AI
+                        </DialogTitle>
+                        <DialogDescription className="text-xs">
+                            Describe what you want to invoice in plain language. The assistant will extract client, dates, and line items into an unsaved draft.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-3 py-2">
+                        <Textarea
+                            placeholder="e.g. Invoice Acme Corp for 10 hours of design at ₹2000 and 5 hours of QA at ₹1200, due in 15 days"
+                            value={aiPrompt}
+                            onChange={(e) => setAiPrompt(e.target.value)}
+                            rows={4}
+                            maxLength={500}
+                            disabled={isGeneratingAi}
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>Input text is sanitized. Never auto-saves.</span>
+                            <span>{aiPrompt.length}/500</span>
+                        </div>
+
+                        {aiError && (
+                            <div className="rounded-md bg-destructive/10 p-2.5 text-xs text-destructive">
+                                {aiError}
+                            </div>
+                        )}
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowAiModal(false)}
+                            disabled={isGeneratingAi}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={handleGenerateAiDraft}
+                            disabled={isGeneratingAi || !aiPrompt.trim()}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                            {isGeneratingAi ? (
+                                <>
+                                    <Spinner className="mr-1.5 h-4 w-4" />
+                                    Parsing...
+                                </>
+                            ) : (
+                                <>
+                                    <Sparkles className="mr-1.5 h-4 w-4" />
+                                    Generate Draft
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
