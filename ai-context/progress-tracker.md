@@ -4,8 +4,8 @@
 
 ## Status
 - **Current phase:** 4
-- **Current ticket:** IF-11
-- **Last completed:** IF-10
+- **Current ticket:** IF-12
+- **Last completed:** IF-11
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -27,7 +27,7 @@
 - [x] IF-10 Scheduler and reminders
 
 ### Phase 4: Insight, API, AI
-- [ ] IF-11 Dashboard and reports
+- [x] IF-11 Dashboard and reports
 - [ ] IF-12 REST API v1
 - [ ] IF-13 AI invoice draft
 
@@ -58,6 +58,7 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-11 completed. 139 tests passing. Quality gate green. Implemented ReportService with PostgreSQL date_trunc aggregate SQL and tenant caching, Dashboard with real KPI cards, masked metrics for Staff role, and recent/overdue invoice widgets, Financial Reports page with Recharts revenue bar chart, status breakdown donut, receivables aging buckets (0-30, 31-60, 61-90, 90+ days), and top 10 clients, plus streamed CSV exports for invoices and payments with role enforcement.
 - 2026-11-01: IF-10 completed. Phase 3 Money complete. 133 tests passing. Quality gate green. Implemented automated scheduler and background processes: `invoices:mark-overdue` (daily overdue status updates past due_date across tenants), `invoices:send-reminders` (automated email reminders at 3, 7, and 14-day overdue milestones with idempotent `invoice_reminders` tracking, client opt-out handling, and PDF attachment), `BustDashboardCache` event listener for `InvoiceSent`, `InvoicePaid`, and `PaymentRecorded`, and invoice detail reminder history UI.
 - 2026-11-01: IF-9 completed. 129 tests passing. Quality gate green. Implemented Stripe Checkout Session generation from public invoice view, CSRF-exempt `/webhooks/stripe` endpoint with signature verification, unique provider event idempotency via `webhook_events` table (replayed events safely ignored), queued `ProcessStripeWebhook` job creating verified payments via `PaymentService::apply()`, and public checkout redirect.
 - 2026-11-01: IF-8 completed. 123 tests passing. Quality gate green. Implemented Payment domain and UI: Payment model with integer minor units and CHECK constraint, PaymentMethod enum, PaymentService::apply() with row locking transaction, balance validation and overpayment prevention, PaymentRecorded and InvoicePaid event dispatching, record payment modal with balance progress bar and payment history table on invoice show page, and Payments list page with KPI cards, method filtering, date filtering, and search.
