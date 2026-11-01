@@ -52,6 +52,15 @@ export type Invoice = {
         address?: string | null;
     };
     items?: InvoiceItem[];
+    payments?: {
+        id: number;
+        amount: number;
+        currency: string;
+        method: string;
+        reference: string | null;
+        paid_at: string;
+        notes: string | null;
+    }[];
 };
 
 export type InvoiceCalculation = {

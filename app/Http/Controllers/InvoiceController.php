@@ -131,7 +131,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        $invoice->load(['client', 'items']);
+        $invoice->load(['client', 'items', 'payments']);
 
         return Inertia::render('invoices/show', [
             'invoice' => $invoice,

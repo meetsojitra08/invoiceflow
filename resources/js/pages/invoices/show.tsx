@@ -4,6 +4,7 @@ import {
     ArrowLeft,
     Check,
     Copy,
+    CreditCard,
     Download,
     ExternalLink,
     Pencil,
@@ -14,6 +15,7 @@ import { toast } from 'sonner';
 import PageHeader from '@/components/shared/page-header';
 import StatusBadge from '@/components/shared/status-badge';
 import Money from '@/components/shared/money';
+import MoneyInput from '@/components/shared/money-input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -24,6 +26,13 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Invoice } from '@/types/invoice';
@@ -52,6 +61,16 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
     const [customMessage, setCustomMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
 
+    const balance = Math.max(0, invoice.total - (invoice.amount_paid || 0));
+
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [paymentAmount, setPaymentAmount] = useState(balance);
+    const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
+    const [paymentReference, setPaymentReference] = useState('');
+    const [paymentDate, setPaymentDate] = useState(new Date().toISOString().slice(0, 10));
+    const [paymentNotes, setPaymentNotes] = useState('');
+    const [isRecordingPayment, setIsRecordingPayment] = useState(false);
+
     const handleCopyPublicLink = async () => {
         try {
             await navigator.clipboard.writeText(publicUrl);
@@ -61,6 +80,24 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
         } catch {
             toast.error('Failed to copy link.');
         }
+    };
+
+    const handleRecordPayment = (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsRecordingPayment(true);
+        router.post(`/invoices/${invoice.id}/payments`, {
+            amount: paymentAmount,
+            method: paymentMethod,
+            reference: paymentReference,
+            paid_at: paymentDate,
+            notes: paymentNotes,
+        }, {
+            onSuccess: () => {
+                setShowPaymentModal(false);
+                setIsRecordingPayment(false);
+            },
+            onError: () => setIsRecordingPayment(false),
+        });
     };
 
     const handleConfirmSend = () => {
@@ -90,8 +127,6 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
             onError: () => setIsVoiding(false),
         });
     };
-
-    const balance = Math.max(0, invoice.total - (invoice.amount_paid || 0));
 
     return (
         <div className="space-y-6">
@@ -131,6 +166,13 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                             <Button size="sm" onClick={() => setShowSendModal(true)}>
                                 <Send className="mr-1.5 h-3.5 w-3.5" />
                                 {invoice.status === 'draft' ? 'Send Invoice' : 'Resend'}
+                            </Button>
+                        )}
+
+                        {can.recordPayment && balance > 0 && invoice.status !== 'draft' && invoice.status !== 'void' && (
+                            <Button size="sm" variant="default" onClick={() => setShowPaymentModal(true)}>
+                                <CreditCard className="mr-1.5 h-3.5 w-3.5" />
+                                Record Payment
                             </Button>
                         )}
 
@@ -334,9 +376,64 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                                 </span>
                             </div>
                         )}
+
+                        <div className="flex justify-between font-bold text-foreground pt-1 border-t">
+                            <span>Balance Due:</span>
+                            <span className="font-mono tabular-nums text-primary">
+                                <Money amount={balance} currency={invoice.currency} />
+                            </span>
+                        </div>
+
+                        {/* Balance progress */}
+                        {invoice.total > 0 && (
+                            <div className="pt-2 space-y-1">
+                                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                                    <div
+                                        className="bg-emerald-500 h-2 rounded-full transition-all"
+                                        style={{ width: `${Math.min(100, (invoice.amount_paid / invoice.total) * 100)}%` }}
+                                    />
+                                </div>
+                                <div className="text-[11px] text-muted-foreground text-right">
+                                    {Math.round((invoice.amount_paid / invoice.total) * 100)}% paid
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+
+            {/* Payment History Section */}
+            {invoice.payments && invoice.payments.length > 0 && (
+                <div className="rounded-lg border border-border bg-card p-6 shadow-xs space-y-4">
+                    <h3 className="font-semibold text-base text-foreground">Payment History</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-muted/50 border-b text-xs uppercase font-medium text-muted-foreground">
+                                <tr>
+                                    <th className="px-4 py-2.5">Date</th>
+                                    <th className="px-4 py-2.5">Method</th>
+                                    <th className="px-4 py-2.5">Reference</th>
+                                    <th className="px-4 py-2.5">Notes</th>
+                                    <th className="px-4 py-2.5 text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {invoice.payments.map((p) => (
+                                    <tr key={p.id} className="hover:bg-muted/30">
+                                        <td className="px-4 py-3 text-xs text-muted-foreground">{p.paid_at}</td>
+                                        <td className="px-4 py-3 capitalize text-xs font-medium">{p.method.replace('_', ' ')}</td>
+                                        <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{p.reference || '-'}</td>
+                                        <td className="px-4 py-3 text-xs text-muted-foreground">{p.notes || '-'}</td>
+                                        <td className="px-4 py-3 text-right font-mono font-bold text-emerald-600">
+                                            <Money amount={p.amount} currency={invoice.currency} />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
 
             {/* Void Modal */}
             <Dialog open={showVoidModal} onOpenChange={setShowVoidModal}>
@@ -437,6 +534,100 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                             {isSending ? 'Sending...' : 'Send Invoice'}
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Record Payment Modal */}
+            <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+                <DialogContent>
+                    <form onSubmit={handleRecordPayment} className="space-y-4">
+                        <DialogHeader>
+                            <DialogTitle>Record Payment for {invoice.number}</DialogTitle>
+                            <DialogDescription>
+                                Remaining Balance: <Money amount={balance} currency={invoice.currency} />
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4 py-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="pay-amount">Amount ({invoice.currency})</Label>
+                                <MoneyInput
+                                    id="pay-amount"
+                                    value={paymentAmount}
+                                    onChange={(val) => setPaymentAmount(val)}
+                                    currency={invoice.currency}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="pay-method">Payment Method</Label>
+                                <Select
+                                    value={paymentMethod}
+                                    onValueChange={(val) => setPaymentMethod(val)}
+                                >
+                                    <SelectTrigger id="pay-method">
+                                        <SelectValue placeholder="Select method" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                                        <SelectItem value="cash">Cash</SelectItem>
+                                        <SelectItem value="credit_card">Credit Card</SelectItem>
+                                        <SelectItem value="stripe">Stripe</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="pay-date">Payment Date</Label>
+                                <Input
+                                    id="pay-date"
+                                    type="date"
+                                    value={paymentDate}
+                                    onChange={(e) => setPaymentDate(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="pay-reference">Reference / Transaction ID</Label>
+                                <Input
+                                    id="pay-reference"
+                                    placeholder="e.g. TXN-123456, Cheque #402"
+                                    value={paymentReference}
+                                    onChange={(e) => setPaymentReference(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="pay-notes">Notes</Label>
+                                <Input
+                                    id="pay-notes"
+                                    placeholder="Optional payment notes"
+                                    value={paymentNotes}
+                                    onChange={(e) => setPaymentNotes(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                type="button"
+                                onClick={() => setShowPaymentModal(false)}
+                                disabled={isRecordingPayment}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isRecordingPayment || paymentAmount <= 0 || paymentAmount > balance}
+                            >
+                                <CreditCard className="mr-1.5 h-3.5 w-3.5" />
+                                {isRecordingPayment ? 'Recording...' : 'Record Payment'}
+                            </Button>
+                        </DialogFooter>
+                    </form>
                 </DialogContent>
             </Dialog>
         </div>

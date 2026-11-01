@@ -92,6 +92,14 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class)->orderBy('position');
     }
 
+    /**
+     * @return HasMany<Payment, $this>
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class)->orderByDesc('paid_at');
+    }
+
     public function balance(): int
     {
         return max(0, $this->total - $this->amount_paid);
