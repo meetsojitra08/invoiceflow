@@ -4,8 +4,8 @@
 
 ## Status
 - **Current phase:** 3
-- **Current ticket:** IF-9
-- **Last completed:** IF-8
+- **Current ticket:** IF-10
+- **Last completed:** IF-9
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -23,7 +23,7 @@
 
 ### Phase 3: Money
 - [x] IF-8 Payments
-- [ ] IF-9 Stripe Checkout and webhook
+- [x] IF-9 Stripe Checkout and webhook
 - [ ] IF-10 Scheduler and reminders
 
 ### Phase 4: Insight, API, AI
@@ -58,6 +58,7 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-9 completed. 129 tests passing. Quality gate green. Implemented Stripe Checkout Session generation from public invoice view, CSRF-exempt `/webhooks/stripe` endpoint with signature verification, unique provider event idempotency via `webhook_events` table (replayed events safely ignored), queued `ProcessStripeWebhook` job creating verified payments via `PaymentService::apply()`, and public checkout redirect.
 - 2026-11-01: IF-8 completed. 123 tests passing. Quality gate green. Implemented Payment domain and UI: Payment model with integer minor units and CHECK constraint, PaymentMethod enum, PaymentService::apply() with row locking transaction, balance validation and overpayment prevention, PaymentRecorded and InvoicePaid event dispatching, record payment modal with balance progress bar and payment history table on invoice show page, and Payments list page with KPI cards, method filtering, date filtering, and search.
 - 2026-11-01: IF-7 completed. Phase 2 Invoicing complete. 111 tests passing. Quality gate green. Implemented DomPDF template with DejaVu Sans UTF-8 support and watermark status stamps, InvoicePdfService (tenant-aware rendering, streaming, and attachment downloading), queued SendInvoiceEmail job with exponential backoff, Markdown InvoiceMail with dynamic public URL and PDF attachment, send/resend actions, and public guest PDF download endpoint `/i/{token}/pdf`.
 - 2026-11-01: IF-6 completed. 103 tests passing. Quality gate green. Implemented Roles, policies, team page, and invitations: role permission matrix across Owner/Accountant/Staff, CompanyPolicy with last-owner protection, CompanyInvitation with 48h expiration and token-based accept flow, Fortify CreateNewUser integration for invitations (joins existing workspace without creating duplicate company), Team UI with role dropdowns, member removal confirm dialog, and copyable invite links.
