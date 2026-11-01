@@ -3,9 +3,9 @@
 > The agent updates this after every ticket. It is the memory between chats.
 
 ## Status
-- **Current phase:** 1
-- **Current ticket:** IF-3
-- **Last completed:** IF-2
+- **Current phase:** 2
+- **Current ticket:** IF-4
+- **Last completed:** IF-3
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -13,7 +13,7 @@
 ### Phase 1: Foundation
 - [x] IF-1 Scaffold
 - [x] IF-2 Auth, workspaces, tenancy, app shell
-- [ ] IF-3 Clients and Products
+- [x] IF-3 Clients and Products
 
 ### Phase 2: Invoicing
 - [ ] IF-4 Invoice domain
@@ -58,5 +58,6 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-3 completed. Phase 1 Foundation complete. 63 tests passing. Quality gate green. Implemented tenant-scoped Clients and Products with soft deletes, ILIKE search, pagination, validation, minor unit money inputs, policies, and React pages.
 - 2026-11-01: IF-2 completed. 47 tests passing. Quality gate green. Implemented multi-tenancy (TenantManager, BelongsToCompany), company workspaces with owner membership on registration, company switcher, shared Inertia props, money utilities, shared UI components, and public layout.
 - 2026-11-01: IF-1 completed. 40 tests passing. Quality gate green. Scaffolded Laravel 13 React starter kit with PostgreSQL, Pest, Sanctum, DomPDF, Stripe, Recharts.
