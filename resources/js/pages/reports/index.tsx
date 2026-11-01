@@ -22,7 +22,6 @@ import {
     PieChart as PieIcon,
     Users,
 } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
 import PageHeader from '@/components/shared/page-header';
 import StatCard from '@/components/shared/stat-card';
 import Money from '@/components/shared/money';
@@ -124,7 +123,7 @@ export default function ReportsIndex({ reportsData, filters }: Props) {
     }));
 
     return (
-        <AppLayout>
+        <>
             <Head title="Financial Reports" />
 
             <div className="space-y-6">
@@ -360,7 +359,7 @@ export default function ReportsIndex({ reportsData, filters }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </>
     );
 }
 

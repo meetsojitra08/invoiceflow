@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { formatDate } from '@/lib/utils';
 import type { Invoice, InvoiceStatus } from '@/types/invoice';
 
 type Props = {
@@ -113,13 +114,13 @@ export default function InvoicesIndex({ invoices, filters, statusCounts, can }: 
         {
             header: 'Issue Date',
             cell: (invoice) => (
-                <span className="text-muted-foreground text-sm">{invoice.issue_date}</span>
+                <span className="text-muted-foreground text-sm whitespace-nowrap">{formatDate(invoice.issue_date)}</span>
             ),
         },
         {
             header: 'Due Date',
             cell: (invoice) => (
-                <span className="text-muted-foreground text-sm">{invoice.due_date}</span>
+                <span className="text-muted-foreground text-sm whitespace-nowrap">{formatDate(invoice.due_date)}</span>
             ),
         },
         {

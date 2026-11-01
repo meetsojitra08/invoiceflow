@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import PageHeader from '@/components/shared/page-header';
 import StatCard from '@/components/shared/stat-card';
 import Money from '@/components/shared/money';
@@ -17,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import type { Payment } from '@/types/payment';
 import { CreditCard, Search, ArrowUpDown } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 
 interface Props {
     payments: {
@@ -76,7 +76,7 @@ export default function PaymentsIndexPage({ payments, totalCollected, filters }:
     };
 
     return (
-        <AppLayout>
+        <>
             <Head title="Payments" />
 
             <div className="space-y-6">
@@ -184,8 +184,8 @@ export default function PaymentsIndexPage({ payments, totalCollected, filters }:
                                 <tbody className="divide-y">
                                     {payments.data.map((payment) => (
                                         <tr key={payment.id} className="hover:bg-muted/30">
-                                            <td className="px-6 py-4 text-xs text-muted-foreground">
-                                                {payment.paid_at}
+                                            <td className="px-6 py-4 text-xs text-muted-foreground whitespace-nowrap">
+                                                {formatDate(payment.paid_at)}
                                             </td>
                                             <td className="px-6 py-4 font-mono font-medium">
                                                 {payment.invoice ? (
@@ -251,6 +251,6 @@ export default function PaymentsIndexPage({ payments, totalCollected, filters }:
                     </div>
                 )}
             </div>
-        </AppLayout>
+        </>
     );
 }

@@ -18,6 +18,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { formatDate } from '@/lib/utils';
 
 type Token = {
     id: number;
@@ -193,8 +194,8 @@ export default function ApiTokens({ tokens, role }: Props) {
                                             <td className="px-4 py-3 text-xs text-muted-foreground">
                                                 {token.last_used_at ?? 'Never'}
                                             </td>
-                                            <td className="px-4 py-3 text-xs text-muted-foreground">
-                                                {token.created_at}
+                                            <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                                                {formatDate(token.created_at)}
                                             </td>
                                             <td className="px-4 py-3 text-right">
                                                 <Button

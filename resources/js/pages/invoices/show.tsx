@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { formatDate } from '@/lib/utils';
 import type { Invoice } from '@/types/invoice';
 
 type Props = {
@@ -134,7 +135,7 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
 
             <PageHeader
                 title={`Invoice ${invoice.number}`}
-                description={`Created on ${invoice.issue_date} for ${invoice.client?.name || 'Client'}`}
+                description={`Created on ${formatDate(invoice.issue_date)} for ${invoice.client?.name || 'Client'}`}
                 breadcrumbs={
                     <Link
                         href="/invoices"
@@ -235,7 +236,7 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                         <p className="text-2xl font-bold font-mono tabular-nums text-foreground">
                             <Money amount={balance} currency={invoice.currency} />
                         </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Due date: {invoice.due_date}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Due date: {formatDate(invoice.due_date)}</p>
                     </div>
                 </div>
 
@@ -263,22 +264,22 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                     <div className="sm:text-right space-y-1.5 text-sm">
                         <div className="flex justify-between sm:justify-end gap-4">
                             <span className="text-muted-foreground">Issue Date:</span>
-                            <span className="font-medium text-foreground">{invoice.issue_date}</span>
+                            <span className="font-medium text-foreground">{formatDate(invoice.issue_date)}</span>
                         </div>
                         <div className="flex justify-between sm:justify-end gap-4">
                             <span className="text-muted-foreground">Due Date:</span>
-                            <span className="font-medium text-foreground">{invoice.due_date}</span>
+                            <span className="font-medium text-foreground">{formatDate(invoice.due_date)}</span>
                         </div>
                         {invoice.sent_at && (
                             <div className="flex justify-between sm:justify-end gap-4">
                                 <span className="text-muted-foreground">Sent At:</span>
-                                <span className="font-medium text-foreground">{invoice.sent_at}</span>
+                                <span className="font-medium text-foreground">{formatDate(invoice.sent_at)}</span>
                             </div>
                         )}
                         {invoice.paid_at && (
                             <div className="flex justify-between sm:justify-end gap-4">
                                 <span className="text-muted-foreground">Paid At:</span>
-                                <span className="font-medium text-foreground">{invoice.paid_at}</span>
+                                <span className="font-medium text-foreground">{formatDate(invoice.paid_at)}</span>
                             </div>
                         )}
                     </div>
@@ -420,7 +421,7 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                             <tbody className="divide-y">
                                 {invoice.payments.map((p) => (
                                     <tr key={p.id} className="hover:bg-muted/30">
-                                        <td className="px-4 py-3 text-xs text-muted-foreground">{p.paid_at}</td>
+                                        <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(p.paid_at)}</td>
                                         <td className="px-4 py-3 capitalize text-xs font-medium">{p.method.replace('_', ' ')}</td>
                                         <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{p.reference || '-'}</td>
                                         <td className="px-4 py-3 text-xs text-muted-foreground">{p.notes || '-'}</td>
@@ -451,7 +452,7 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                             <tbody className="divide-y">
                                 {invoice.reminders.map((r) => (
                                     <tr key={r.id} className="hover:bg-muted/30">
-                                        <td className="px-4 py-3 text-xs text-muted-foreground">{r.sent_at}</td>
+                                        <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(r.sent_at)}</td>
                                         <td className="px-4 py-3 text-xs font-medium">{r.days_overdue} days past due</td>
                                         <td className="px-4 py-3 text-xs">
                                             <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">

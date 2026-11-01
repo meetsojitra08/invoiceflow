@@ -9,7 +9,6 @@ import {
     Send,
     TrendingUp,
 } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
 import PageHeader from '@/components/shared/page-header';
 import StatCard from '@/components/shared/stat-card';
 import StatusBadge from '@/components/shared/status-badge';
@@ -17,6 +16,7 @@ import Money from '@/components/shared/money';
 import EmptyState from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDate } from '@/lib/utils';
 import type { Invoice } from '@/types/invoice';
 
 type Props = {
@@ -37,7 +37,7 @@ export default function Dashboard({ kpis, recentInvoices, overdueInvoices, userR
     const isOwnerOrAccountant = ['owner', 'accountant'].includes(userRole);
 
     return (
-        <AppLayout>
+        <>
             <Head title="Dashboard" />
 
             <div className="space-y-6">
@@ -139,20 +139,20 @@ export default function Dashboard({ kpis, recentInvoices, overdueInvoices, userR
                                     {overdueInvoices.map((inv) => (
                                         <div
                                             key={inv.id}
-                                            className="py-3 flex items-center justify-between hover:bg-muted/40 px-2 rounded-md transition-colors"
+                                            className="py-3 flex items-center justify-between hover:bg-muted/40 px-2 rounded-md transition-colors gap-3"
                                         >
-                                            <div className="space-y-0.5">
+                                            <div className="space-y-0.5 min-w-0">
                                                 <Link
                                                     href={`/invoices/${inv.id}`}
-                                                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                                                    className="font-mono text-sm font-semibold text-primary hover:underline block truncate"
                                                 >
                                                     {inv.number}
                                                 </Link>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {inv.client?.name ?? 'Unknown client'} • Due {inv.due_date}
+                                                <p className="text-xs text-muted-foreground truncate">
+                                                    {inv.client?.name ?? 'Unknown client'} • Due {formatDate(inv.due_date)}
                                                 </p>
                                             </div>
-                                            <div className="text-right">
+                                            <div className="flex items-center gap-3 shrink-0 text-right">
                                                 <div className="font-mono font-semibold text-sm text-foreground">
                                                     <Money amount={inv.total - inv.amount_paid} currency={inv.currency} />
                                                 </div>
@@ -200,20 +200,20 @@ export default function Dashboard({ kpis, recentInvoices, overdueInvoices, userR
                                     {recentInvoices.map((inv) => (
                                         <div
                                             key={inv.id}
-                                            className="py-3 flex items-center justify-between hover:bg-muted/40 px-2 rounded-md transition-colors"
+                                            className="py-3 flex items-center justify-between hover:bg-muted/40 px-2 rounded-md transition-colors gap-3"
                                         >
-                                            <div className="space-y-0.5">
+                                            <div className="space-y-0.5 min-w-0">
                                                 <Link
                                                     href={`/invoices/${inv.id}`}
-                                                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                                                    className="font-mono text-sm font-semibold text-primary hover:underline block truncate"
                                                 >
                                                     {inv.number}
                                                 </Link>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {inv.client?.name ?? 'Unknown client'} • {inv.issue_date}
+                                                <p className="text-xs text-muted-foreground truncate">
+                                                    {inv.client?.name ?? 'Unknown client'} • {formatDate(inv.issue_date)}
                                                 </p>
                                             </div>
-                                            <div className="text-right">
+                                            <div className="flex items-center gap-3 shrink-0 text-right">
                                                 <div className="font-mono font-semibold text-sm text-foreground">
                                                     <Money amount={inv.total} currency={inv.currency} />
                                                 </div>
@@ -227,6 +227,6 @@ export default function Dashboard({ kpis, recentInvoices, overdueInvoices, userR
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

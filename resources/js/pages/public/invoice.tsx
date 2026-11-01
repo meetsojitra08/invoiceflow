@@ -6,6 +6,7 @@ import Money from '@/components/shared/money';
 import StatusBadge from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Download, CreditCard } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 
 interface Props {
     invoice: Invoice;
@@ -37,7 +38,7 @@ export default function PublicInvoicePage({ invoice }: Props) {
                         <span className="text-sm text-muted-foreground">
                             {isPaid
                                 ? 'This invoice has been fully paid.'
-                                : `Payment due by ${invoice.due_date}`}
+                                : `Payment due by ${formatDate(invoice.due_date)}`}
                         </span>
                     </div>
 
@@ -91,8 +92,8 @@ export default function PublicInvoicePage({ invoice }: Props) {
                                 {invoiceNumber}
                             </p>
                             <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                                <div><span className="font-medium text-gray-700">Issue Date:</span> {invoice.issue_date}</div>
-                                <div><span className="font-medium text-gray-700">Due Date:</span> {invoice.due_date}</div>
+                                <div><span className="font-medium text-gray-700">Issue Date:</span> {formatDate(invoice.issue_date)}</div>
+                                <div><span className="font-medium text-gray-700">Due Date:</span> {formatDate(invoice.due_date)}</div>
                             </div>
                         </div>
                     </div>

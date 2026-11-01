@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import PageHeader from '@/components/shared/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,6 +25,7 @@ import ConfirmDialog from '@/components/shared/confirm-dialog';
 import InputError from '@/components/input-error';
 import type { TeamMember, TeamInvitation } from '@/types/team';
 import { UserPlus, Copy, Check, ShieldAlert, Trash2 } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 
 interface Props {
     members: TeamMember[];
@@ -88,7 +88,7 @@ export default function TeamIndexPage({ members, invitations, can }: Props) {
     };
 
     return (
-        <AppLayout>
+        <>
             <Head title="Team Management" />
 
             <div className="space-y-8">
@@ -304,11 +304,11 @@ export default function TeamIndexPage({ members, invitations, can }: Props) {
                                                     {invite.role_label}
                                                 </Badge>
                                             </td>
-                                            <td className="px-6 py-4 text-muted-foreground text-xs">
-                                                {invite.created_at}
+                                            <td className="px-6 py-4 text-muted-foreground text-xs whitespace-nowrap">
+                                                {formatDate(invite.created_at)}
                                             </td>
-                                            <td className="px-6 py-4 text-muted-foreground text-xs">
-                                                {invite.expires_at}
+                                            <td className="px-6 py-4 text-muted-foreground text-xs whitespace-nowrap">
+                                                {formatDate(invite.expires_at)}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <Button
@@ -348,6 +348,6 @@ export default function TeamIndexPage({ members, invitations, can }: Props) {
                 variant="destructive"
                 onConfirm={handleRemoveMember}
             />
-        </AppLayout>
+        </>
     );
 }

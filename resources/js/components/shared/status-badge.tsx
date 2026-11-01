@@ -13,7 +13,7 @@ export default function StatusBadge({ status, className = '' }: StatusBadgeProps
             return (
                 <Badge
                     variant="outline"
-                    className={`bg-gray-100 text-gray-700 border-gray-300 font-medium ${className}`}
+                    className={`bg-zinc-100 text-zinc-800 border-zinc-300 dark:bg-zinc-800/80 dark:text-zinc-200 dark:border-zinc-700 font-medium ${className}`}
                 >
                     Draft
                 </Badge>
@@ -22,7 +22,7 @@ export default function StatusBadge({ status, className = '' }: StatusBadgeProps
             return (
                 <Badge
                     variant="outline"
-                    className={`bg-blue-50 text-blue-700 border-blue-300 font-medium ${className}`}
+                    className={`bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800/60 font-medium ${className}`}
                 >
                     Sent
                 </Badge>
@@ -31,7 +31,7 @@ export default function StatusBadge({ status, className = '' }: StatusBadgeProps
             return (
                 <Badge
                     variant="outline"
-                    className={`bg-amber-50 text-amber-700 border-amber-300 font-medium ${className}`}
+                    className={`bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60 font-medium ${className}`}
                 >
                     Partially Paid
                 </Badge>
@@ -40,7 +40,7 @@ export default function StatusBadge({ status, className = '' }: StatusBadgeProps
             return (
                 <Badge
                     variant="outline"
-                    className={`bg-green-50 text-green-700 border-green-300 font-medium ${className}`}
+                    className={`bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60 font-medium ${className}`}
                 >
                     Paid
                 </Badge>
@@ -49,7 +49,7 @@ export default function StatusBadge({ status, className = '' }: StatusBadgeProps
             return (
                 <Badge
                     variant="outline"
-                    className={`bg-red-50 text-red-700 border-red-300 font-medium ${className}`}
+                    className={`bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800/60 font-medium ${className}`}
                 >
                     Overdue
                 </Badge>
@@ -58,7 +58,7 @@ export default function StatusBadge({ status, className = '' }: StatusBadgeProps
             return (
                 <Badge
                     variant="outline"
-                    className={`bg-gray-100 text-gray-500 border-gray-200 line-through font-medium ${className}`}
+                    className={`bg-zinc-100 text-zinc-500 border-zinc-200 line-through dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700 font-medium ${className}`}
                 >
                     Void
                 </Badge>

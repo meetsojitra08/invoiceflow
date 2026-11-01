@@ -160,8 +160,18 @@ class DemoSeeder extends Seeder
                 $invoiceNumber = sprintf('INV-%04d', $i + 1);
                 $client = $clients[$i % count($clients)];
 
-                // Spread dates over the last 6 months
-                $daysAgo = ($i * 4) + 2;
+                // Spread dates: distribute invoices across the last 90 days, with several in current month
+                $daysAgo = match (true) {
+                    $i === 0 => 0, // Draft today
+                    $i === 1 => 1, // Draft yesterday
+                    $i === 6 => 0, // Sent today
+                    $i === 7 => 1, // Sent yesterday
+                    $i === 8 => 2, // Sent 2 days ago
+                    $i === 16 => 0, // Partially paid today
+                    $i === 22 => 0, // Paid today
+                    $i === 23 => 1, // Paid yesterday
+                    default => ($i * 3) + 2,
+                };
                 $issueDate = Carbon::today()->subDays($daysAgo);
                 $dueDate = $status === InvoiceStatus::OVERDUE
                     ? Carbon::today()->subDays(random_int(3, 30))
@@ -235,9 +245,11 @@ class DemoSeeder extends Seeder
                 $invoice->payments()->delete();
                 if ($amountPaid > 0) {
                     $method = $methods[$i % count($methods)];
-                    $paymentDate = $status === InvoiceStatus::PAID
-                        ? $dueDate->copy()->subDays(random_int(1, 3))
-                        : $issueDate->copy()->addDays(5);
+                    $paymentDate = ($i % 4 === 0)
+                        ? Carbon::today()->subDays(random_int(0, 3))
+                        : ($status === InvoiceStatus::PAID
+                            ? $dueDate->copy()->subDays(random_int(1, 3))
+                            : $issueDate->copy()->addDays(5));
 
                     Payment::create([
                         'company_id' => $company->id,

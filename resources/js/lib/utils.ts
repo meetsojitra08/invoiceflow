@@ -10,3 +10,19 @@ export function cn(...inputs: ClassValue[]) {
 export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
     return typeof url === 'string' ? url : url.url;
 }
+
+export function formatDate(date: string | null | undefined): string {
+    if (!date) return '—';
+    try {
+        const cleaned = date.includes('T') ? date : `${date}T12:00:00Z`;
+        const d = new Date(cleaned);
+        if (isNaN(d.getTime())) return date;
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(d);
+    } catch {
+        return date;
+    }
+}
