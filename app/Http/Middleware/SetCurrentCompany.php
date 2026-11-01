@@ -25,7 +25,7 @@ class SetCurrentCompany
     public function handle(Request $request, Closure $next): Response
     {
         /** @var User|null $user */
-        $user = $request->user();
+        $user = $request->user() ?? auth('sanctum')->user();
 
         if ($user !== null) {
             $companyId = $user->current_company_id;
