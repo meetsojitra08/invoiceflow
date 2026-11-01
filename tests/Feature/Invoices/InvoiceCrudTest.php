@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\Tenancy\TenantManager;
 
 test('tenant can view list of own invoices', function () {
     $companyA = Company::factory()->create();
@@ -210,4 +211,24 @@ test('public invoice can be viewed without authentication using public token', f
     $response->assertOk();
     $response->assertSee($invoice->number);
     $response->assertSee($client->name);
+});
+
+test('user can view single invoice via route model binding without prior tenant initialization', function () {
+    $company = Company::factory()->create();
+    $user = User::factory()->create(['current_company_id' => $company->id]);
+    $company->users()->attach($user->id, ['role' => Role::OWNER->value]);
+    $client = Client::factory()->create(['company_id' => $company->id]);
+
+    $invoice = Invoice::factory()->create([
+        'company_id' => $company->id,
+        'client_id' => $client->id,
+        'number' => 'INV-0010',
+    ]);
+
+    // Clear tenant context explicitly to test middleware resolution order
+    app(TenantManager::class)->clear();
+
+    $response = $this->actingAs($user)->get("/invoices/{$invoice->id}");
+
+    $response->assertOk();
 });
