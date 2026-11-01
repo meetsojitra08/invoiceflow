@@ -4,8 +4,8 @@
 
 ## Status
 - **Current phase:** 3
-- **Current ticket:** IF-8
-- **Last completed:** IF-7
+- **Current ticket:** IF-9
+- **Last completed:** IF-8
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -22,7 +22,7 @@
 - [x] IF-7 PDF, email, public page
 
 ### Phase 3: Money
-- [ ] IF-8 Payments
+- [x] IF-8 Payments
 - [ ] IF-9 Stripe Checkout and webhook
 - [ ] IF-10 Scheduler and reminders
 
@@ -58,6 +58,7 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-8 completed. 123 tests passing. Quality gate green. Implemented Payment domain and UI: Payment model with integer minor units and CHECK constraint, PaymentMethod enum, PaymentService::apply() with row locking transaction, balance validation and overpayment prevention, PaymentRecorded and InvoicePaid event dispatching, record payment modal with balance progress bar and payment history table on invoice show page, and Payments list page with KPI cards, method filtering, date filtering, and search.
 - 2026-11-01: IF-7 completed. Phase 2 Invoicing complete. 111 tests passing. Quality gate green. Implemented DomPDF template with DejaVu Sans UTF-8 support and watermark status stamps, InvoicePdfService (tenant-aware rendering, streaming, and attachment downloading), queued SendInvoiceEmail job with exponential backoff, Markdown InvoiceMail with dynamic public URL and PDF attachment, send/resend actions, and public guest PDF download endpoint `/i/{token}/pdf`.
 - 2026-11-01: IF-6 completed. 103 tests passing. Quality gate green. Implemented Roles, policies, team page, and invitations: role permission matrix across Owner/Accountant/Staff, CompanyPolicy with last-owner protection, CompanyInvitation with 48h expiration and token-based accept flow, Fortify CreateNewUser integration for invitations (joins existing workspace without creating duplicate company), Team UI with role dropdowns, member removal confirm dialog, and copyable invite links.
 - 2026-11-01: IF-5 completed. 92 tests passing. Quality gate green. Implemented Invoice UI: live calculation endpoint with validation, full draft builder with product snapshot auto-fill and debounced calculations, invoices list with status filter pills and search, invoice detail view with state action transitions (send, void, duplicate), and responsive public guest invoice view.
