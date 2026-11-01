@@ -3,9 +3,9 @@
 > The agent updates this after every ticket. It is the memory between chats.
 
 ## Status
-- **Current phase:** 5
-- **Current ticket:** IF-14
-- **Last completed:** IF-13
+- **Current phase:** 5 (Complete)
+- **Current ticket:** None (All MVP tickets IF-1 to IF-15 complete)
+- **Last completed:** IF-15
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -32,8 +32,8 @@
 - [x] IF-13 AI invoice draft
 
 ### Phase 5: Ship
-- [ ] IF-14 Demo data, performance, CI
-- [ ] IF-15 Deploy
+- [x] IF-14 Demo data, performance, CI
+- [x] IF-15 Deploy
 
 ## Decisions
 | Decision | Reason |
@@ -58,6 +58,8 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-15 completed. Phase 5 Ship complete. All 15 tickets (IF-1 through IF-15) complete! 161 tests passing (836 assertions). Quality gate green. Verified production optimization caches (config:cache, route:cache, view:cache, event:cache), queue worker (database driver), scheduler (console.php), and idempotent migrations and seeders (`--force`). Full deployment runbook and checklist validated against `docs/DEPLOYMENT.md`.
+- 2026-11-01: IF-14 completed. 161 tests passing. Quality gate green. Implemented DemoSeeder with realistic company data (Demo Corp, 3 users: owner, accountant, staff with password `password`, 10 clients, 15 products, 40 invoices across all statuses with items, payments, and reminders), enabled `Model::preventLazyLoading` in non-production, verified zero N+1 queries across lists and dashboard, created GitHub Actions CI workflow (`.github/workflows/ci.yml`) with PostgreSQL 16 service, and verified README quick start.
 - 2026-11-01: IF-13 completed. Phase 4 Insight, API, AI complete. 160 tests passing. Quality gate green. Implemented AiService with prompt injection guard, timeout, retries, and strict JSON parsing, `ai_requests` logging table, `features.ai` toggle, per-company daily cap (50), client matching without auto-creation, unit price conversion to minor units, and "Create with AI" modal loading an unsaved draft labeled "AI draft: review before saving".
 - 2026-11-01: IF-12 completed. 155 tests passing. Quality gate green. Implemented REST API v1 (`/api/v1`) with Sanctum personal access tokens: token generation and revocation (`POST /api/v1/auth/token`, `DELETE /api/v1/auth/token`), 60 req/min rate limiting, tenant-scoped API controllers and resources for Clients, Products, Invoices (CRUD, send, void, download PDF), and Payments, strict overpayment and status transition validation, and Web Profile Settings API Tokens management UI.
 - 2026-11-01: IF-11 completed. 139 tests passing. Quality gate green. Implemented ReportService with PostgreSQL date_trunc aggregate SQL and tenant caching, Dashboard with real KPI cards, masked metrics for Staff role, and recent/overdue invoice widgets, Financial Reports page with Recharts revenue bar chart, status breakdown donut, receivables aging buckets (0-30, 31-60, 61-90, 90+ days), and top 10 clients, plus streamed CSV exports for invoices and payments with role enforcement.
