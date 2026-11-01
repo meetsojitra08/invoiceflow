@@ -4,8 +4,8 @@
 
 ## Status
 - **Current phase:** 2
-- **Current ticket:** IF-5
-- **Last completed:** IF-4
+- **Current ticket:** IF-6
+- **Last completed:** IF-5
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -17,7 +17,7 @@
 
 ### Phase 2: Invoicing
 - [x] IF-4 Invoice domain
-- [ ] IF-5 Invoice UI
+- [x] IF-5 Invoice UI
 - [ ] IF-6 Roles, policies, team
 - [ ] IF-7 PDF, email, public page
 
@@ -58,6 +58,7 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-5 completed. 92 tests passing. Quality gate green. Implemented Invoice UI: live calculation endpoint with validation, full draft builder with product snapshot auto-fill and debounced calculations, invoices list with status filter pills and search, invoice detail view with state action transitions (send, void, duplicate), and responsive public guest invoice view.
 - 2026-11-01: IF-4 completed. 84 tests passing. Quality gate green. Implemented Invoice domain: migrations, Invoice & InvoiceItem models with item snapshots, InvoiceStatus enum with lifecycle state transitions, InvoiceCalculator with half-up rounding, InvoiceNumberGenerator with row locking, and InvoiceService (draft/update/send/void/duplicate).
 - 2026-11-01: IF-3 completed. Phase 1 Foundation complete. 63 tests passing. Quality gate green. Implemented tenant-scoped Clients and Products with soft deletes, ILIKE search, pagination, validation, minor unit money inputs, policies, and React pages.
 - 2026-11-01: IF-2 completed. 47 tests passing. Quality gate green. Implemented multi-tenancy (TenantManager, BelongsToCompany), company workspaces with owner membership on registration, company switcher, shared Inertia props, money utilities, shared UI components, and public layout.
