@@ -25,3 +25,4 @@ class InvoiceNumberGenerator
         return $number;
     }
 }
+

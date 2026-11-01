@@ -25,3 +25,4 @@ class PaymentPolicy
         return in_array($user->currentRole(), [Role::OWNER->value, Role::ACCOUNTANT->value], true);
     }
 }
+

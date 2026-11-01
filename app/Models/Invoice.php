@@ -100,6 +100,14 @@ class Invoice extends Model
         return $this->hasMany(Payment::class)->orderByDesc('paid_at');
     }
 
+    /**
+     * @return HasMany<InvoiceReminder, $this>
+     */
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(InvoiceReminder::class)->orderBy('days_overdue');
+    }
+
     public function balance(): int
     {
         return max(0, $this->total - $this->amount_paid);

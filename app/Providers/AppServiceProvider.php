@@ -2,10 +2,15 @@
 
 namespace App\Providers;
 
+use App\Events\InvoicePaid;
+use App\Events\InvoiceSent;
+use App\Events\PaymentRecorded;
+use App\Listeners\BustDashboardCache;
 use App\Services\Tenancy\TenantManager;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -25,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        Event::listen(InvoiceSent::class, BustDashboardCache::class);
+        Event::listen(InvoicePaid::class, BustDashboardCache::class);
+        Event::listen(PaymentRecorded::class, BustDashboardCache::class);
     }
 
     /**

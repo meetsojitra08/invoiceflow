@@ -40,3 +40,4 @@ class ClientPolicy
         return $user->currentRole() === Role::OWNER->value;
     }
 }
+

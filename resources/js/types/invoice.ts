@@ -61,6 +61,11 @@ export type Invoice = {
         paid_at: string;
         notes: string | null;
     }[];
+    reminders?: {
+        id: number;
+        days_overdue: number;
+        sent_at: string;
+    }[];
 };
 
 export type InvoiceCalculation = {

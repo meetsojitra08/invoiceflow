@@ -32,3 +32,4 @@ class CompanyInvitationFactory extends Factory
         ];
     }
 }
+

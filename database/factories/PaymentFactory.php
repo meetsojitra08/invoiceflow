@@ -34,3 +34,4 @@ class PaymentFactory extends Factory
         ];
     }
 }
+

@@ -69,3 +69,4 @@ class StripeService
         return $event->toArray();
     }
 }
+

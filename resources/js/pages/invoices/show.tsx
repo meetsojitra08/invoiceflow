@@ -435,6 +435,37 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                 </div>
             )}
 
+            {/* Reminder History Section */}
+            {invoice.reminders && invoice.reminders.length > 0 && (
+                <div className="rounded-lg border border-border bg-card p-6 shadow-xs space-y-4">
+                    <h3 className="font-semibold text-base text-foreground">Reminder History</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-muted/50 border-b text-xs uppercase font-medium text-muted-foreground">
+                                <tr>
+                                    <th className="px-4 py-2.5">Sent Date</th>
+                                    <th className="px-4 py-2.5">Milestone</th>
+                                    <th className="px-4 py-2.5">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {invoice.reminders.map((r) => (
+                                    <tr key={r.id} className="hover:bg-muted/30">
+                                        <td className="px-4 py-3 text-xs text-muted-foreground">{r.sent_at}</td>
+                                        <td className="px-4 py-3 text-xs font-medium">{r.days_overdue} days past due</td>
+                                        <td className="px-4 py-3 text-xs">
+                                            <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                                                Sent
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
             {/* Void Modal */}
             <Dialog open={showVoidModal} onOpenChange={setShowVoidModal}>
                 <DialogContent>
