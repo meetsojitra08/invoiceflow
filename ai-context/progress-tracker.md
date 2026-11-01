@@ -3,9 +3,9 @@
 > The agent updates this after every ticket. It is the memory between chats.
 
 ## Status
-- **Current phase:** 2
-- **Current ticket:** IF-7
-- **Last completed:** IF-6
+- **Current phase:** 3
+- **Current ticket:** IF-8
+- **Last completed:** IF-7
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
@@ -19,7 +19,7 @@
 - [x] IF-4 Invoice domain
 - [x] IF-5 Invoice UI
 - [x] IF-6 Roles, policies, team
-- [ ] IF-7 PDF, email, public page
+- [x] IF-7 PDF, email, public page
 
 ### Phase 3: Money
 - [ ] IF-8 Payments
@@ -58,6 +58,7 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-7 completed. Phase 2 Invoicing complete. 111 tests passing. Quality gate green. Implemented DomPDF template with DejaVu Sans UTF-8 support and watermark status stamps, InvoicePdfService (tenant-aware rendering, streaming, and attachment downloading), queued SendInvoiceEmail job with exponential backoff, Markdown InvoiceMail with dynamic public URL and PDF attachment, send/resend actions, and public guest PDF download endpoint `/i/{token}/pdf`.
 - 2026-11-01: IF-6 completed. 103 tests passing. Quality gate green. Implemented Roles, policies, team page, and invitations: role permission matrix across Owner/Accountant/Staff, CompanyPolicy with last-owner protection, CompanyInvitation with 48h expiration and token-based accept flow, Fortify CreateNewUser integration for invitations (joins existing workspace without creating duplicate company), Team UI with role dropdowns, member removal confirm dialog, and copyable invite links.
 - 2026-11-01: IF-5 completed. 92 tests passing. Quality gate green. Implemented Invoice UI: live calculation endpoint with validation, full draft builder with product snapshot auto-fill and debounced calculations, invoices list with status filter pills and search, invoice detail view with state action transitions (send, void, duplicate), and responsive public guest invoice view.
 - 2026-11-01: IF-4 completed. 84 tests passing. Quality gate green. Implemented Invoice domain: migrations, Invoice & InvoiceItem models with item snapshots, InvoiceStatus enum with lifecycle state transitions, InvoiceCalculator with half-up rounding, InvoiceNumberGenerator with row locking, and InvoiceService (draft/update/send/void/duplicate).
