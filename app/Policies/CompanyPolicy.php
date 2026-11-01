@@ -59,4 +59,3 @@ class CompanyPolicy
         return true;
     }
 }
-

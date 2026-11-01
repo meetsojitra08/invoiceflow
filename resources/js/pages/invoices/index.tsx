@@ -347,3 +347,4 @@ export default function InvoicesIndex({ invoices, filters, statusCounts, can }: 
         </div>
     );
 }
+

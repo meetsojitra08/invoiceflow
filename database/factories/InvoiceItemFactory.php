@@ -34,4 +34,3 @@ class InvoiceItemFactory extends Factory
         ];
     }
 }
-

@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanySwitchController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PublicInvoiceController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +26,11 @@ Route::post('invitations/{token}/accept', [InvitationController::class, 'accept'
 
 Route::middleware(['auth'])->group(function () {
     Route::post('companies/switch', CompanySwitchController::class)->name('companies.switch');
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/export/invoices', [ReportController::class, 'exportInvoices'])->name('reports.export.invoices');
+    Route::get('reports/export/payments', [ReportController::class, 'exportPayments'])->name('reports.export.payments');
 
     Route::get('team', [TeamController::class, 'index'])->name('team.index');
     Route::post('team/invite', [TeamController::class, 'invite'])->name('team.invite');

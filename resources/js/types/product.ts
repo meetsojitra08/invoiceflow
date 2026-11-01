@@ -10,3 +10,4 @@ export type Product = {
     updated_at: string;
     deleted_at: string | null;
 };
+

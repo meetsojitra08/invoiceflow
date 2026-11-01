@@ -16,3 +16,4 @@ export type TeamInvitation = {
     created_at: string;
     invite_url: string;
 };
+

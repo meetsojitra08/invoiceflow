@@ -19,3 +19,4 @@ export default function InvoicesEdit({ invoice, clients, products }: Props) {
         />
     );
 }
+

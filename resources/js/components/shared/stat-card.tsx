@@ -33,3 +33,4 @@ export default function StatCard({
         </Card>
     );
 }
+

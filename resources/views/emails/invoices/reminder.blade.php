@@ -16,3 +16,4 @@ View & Pay Invoice Online
 Thank you for your business!<br>
 {{ $invoice->company->name }}
 </x-mail::message>
+

@@ -30,3 +30,4 @@ export default function PublicLayout({ children, title }: PublicLayoutProps) {
         </div>
     );
 }
+

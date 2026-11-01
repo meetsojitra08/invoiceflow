@@ -130,3 +130,4 @@ export default function ClientsShow({ client, stats, invoices }: Props) {
         </div>
     );
 }
+

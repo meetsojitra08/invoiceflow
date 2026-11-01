@@ -22,3 +22,4 @@ View & Pay Invoice
 Thank you for your business!<br>
 {{ $invoice->company->name }}
 </x-mail::message>
+

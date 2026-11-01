@@ -15,3 +15,4 @@ export type Payment = {
     created_at: string;
     invoice?: Invoice;
 };
+

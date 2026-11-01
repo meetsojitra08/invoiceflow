@@ -192,3 +192,4 @@ export default function ProductsIndex({ products, filters, can }: Props) {
         </div>
     );
 }
+

@@ -190,3 +190,4 @@ export default function ClientsIndex({ clients, filters, can }: Props) {
         </div>
     );
 }
+

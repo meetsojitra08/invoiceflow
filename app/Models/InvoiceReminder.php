@@ -39,4 +39,3 @@ class InvoiceReminder extends Model
         return $this->belongsTo(Invoice::class);
     }
 }
-

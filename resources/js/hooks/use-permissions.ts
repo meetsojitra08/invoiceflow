@@ -24,3 +24,4 @@ export function usePermissions() {
         canManageApiTokens: isOwner || isAccountant,
     };
 }
+
