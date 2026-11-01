@@ -39,6 +39,24 @@ class Invoice extends Model
     ];
 
     /**
+     * @var list<string>
+     */
+    protected $appends = [
+        'invoice_number',
+        'amount_due',
+    ];
+
+    public function getInvoiceNumberAttribute(): string
+    {
+        return $this->number;
+    }
+
+    public function getAmountDueAttribute(): int
+    {
+        return $this->balance();
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
