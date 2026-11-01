@@ -4,14 +4,14 @@
 
 ## Status
 - **Current phase:** 1
-- **Current ticket:** IF-1
-- **Last completed:** none
-- **Last updated:** YYYY-MM-DD
+- **Current ticket:** IF-2
+- **Last completed:** IF-1
+- **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
 
 ### Phase 1: Foundation
-- [ ] IF-1 Scaffold
+- [x] IF-1 Scaffold
 - [ ] IF-2 Auth, workspaces, tenancy, app shell
 - [ ] IF-3 Clients and Products
 
@@ -58,4 +58,4 @@
 | | | |
 
 ## Session log
-<!-- newest first: date, tickets done, test count, notes -->
+- 2026-11-01: IF-1 completed. 40 tests passing. Quality gate green. Scaffolded Laravel 13 React starter kit with PostgreSQL, Pest, Sanctum, DomPDF, Stripe, Recharts.
