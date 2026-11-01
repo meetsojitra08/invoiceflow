@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'welcome')->name('home');
 
 Route::get('i/{token}', [PublicInvoiceController::class, 'show'])->name('invoices.public');
+Route::get('i/{token}/pdf', [PublicInvoiceController::class, 'downloadPdf'])->name('invoices.public.pdf');
 Route::get('invitations/{token}/accept', [InvitationController::class, 'show'])->name('invitations.accept');
 Route::post('invitations/{token}/accept', [InvitationController::class, 'accept'])->name('invitations.accept.post');
 
@@ -28,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('clients', ClientController::class);
     Route::resource('products', ProductController::class)->except(['show']);
 
+    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
     Route::post('invoices/calculate', [InvoiceController::class, 'calculate'])->name('invoices.calculate');
     Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send'])->name('invoices.send');
     Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])->name('invoices.void');

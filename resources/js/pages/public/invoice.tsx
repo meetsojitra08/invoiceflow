@@ -34,12 +34,14 @@ export default function PublicInvoicePage({ invoice }: Props) {
 
                     <div className="flex items-center gap-2">
                         <Button
+                            asChild
                             variant="outline"
                             size="sm"
-                            onClick={() => window.print()}
                         >
-                            <Download className="w-4 h-4 mr-2" />
-                            Print / PDF
+                            <a href={`/i/${invoice.public_token}/pdf`} target="_blank" rel="noreferrer">
+                                <Download className="w-4 h-4 mr-2" />
+                                Download PDF
+                            </a>
                         </Button>
                         {canPay && (
                             <Button size="sm">

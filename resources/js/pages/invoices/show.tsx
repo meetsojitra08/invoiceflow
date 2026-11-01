@@ -47,6 +47,11 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
     const [voidReason, setVoidReason] = useState('');
     const [isVoiding, setIsVoiding] = useState(false);
 
+    const [showSendModal, setShowSendModal] = useState(false);
+    const [recipientEmail, setRecipientEmail] = useState(invoice.client?.email || '');
+    const [customMessage, setCustomMessage] = useState('');
+    const [isSending, setIsSending] = useState(false);
+
     const handleCopyPublicLink = async () => {
         try {
             await navigator.clipboard.writeText(publicUrl);
@@ -56,6 +61,20 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
         } catch {
             toast.error('Failed to copy link.');
         }
+    };
+
+    const handleConfirmSend = () => {
+        setIsSending(true);
+        router.post(`/invoices/${invoice.id}/send`, {
+            recipient_email: recipientEmail,
+            message: customMessage,
+        }, {
+            onSuccess: () => {
+                setShowSendModal(false);
+                setIsSending(false);
+            },
+            onError: () => setIsSending(false),
+        });
     };
 
     const handleConfirmVoid = () => {
@@ -101,12 +120,17 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                             </Button>
                         )}
 
-                        {can.send && invoice.status === 'draft' && (
-                            <Button asChild size="sm">
-                                <Link href={`/invoices/${invoice.id}/send`} method="post" as="button">
-                                    <Send className="mr-1.5 h-3.5 w-3.5" />
-                                    Mark as Sent
-                                </Link>
+                        <Button asChild variant="outline" size="sm">
+                            <a href={`/invoices/${invoice.id}/pdf`} target="_blank" rel="noreferrer">
+                                <Download className="mr-1.5 h-3.5 w-3.5" />
+                                PDF
+                            </a>
+                        </Button>
+
+                        {can.send && (
+                            <Button size="sm" onClick={() => setShowSendModal(true)}>
+                                <Send className="mr-1.5 h-3.5 w-3.5" />
+                                {invoice.status === 'draft' ? 'Send Invoice' : 'Resend'}
                             </Button>
                         )}
 
@@ -354,6 +378,63 @@ export default function InvoicesShow({ invoice, publicUrl, can }: Props) {
                             disabled={isVoiding || !voidReason.trim()}
                         >
                             Confirm Void
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Send Modal */}
+            <Dialog open={showSendModal} onOpenChange={setShowSendModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {invoice.status === 'draft' ? `Send Invoice ${invoice.number}` : `Resend Invoice ${invoice.number}`}
+                        </DialogTitle>
+                        <DialogDescription>
+                            Email the invoice with PDF attachment and secure payment link directly to your customer.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 py-2">
+                        <div className="space-y-2">
+                            <Label htmlFor="send-recipient-email">Recipient Email</Label>
+                            <Input
+                                id="send-recipient-email"
+                                type="email"
+                                placeholder="customer@example.com"
+                                value={recipientEmail}
+                                onChange={(e) => setRecipientEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="send-custom-message">Optional Custom Message</Label>
+                            <Input
+                                id="send-custom-message"
+                                placeholder="Thank you for your prompt payment!"
+                                value={customMessage}
+                                onChange={(e) => setCustomMessage(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            type="button"
+                            onClick={() => setShowSendModal(false)}
+                            disabled={isSending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={handleConfirmSend}
+                            disabled={isSending || !recipientEmail.trim()}
+                        >
+                            <Send className="mr-1.5 h-3.5 w-3.5" />
+                            {isSending ? 'Sending...' : 'Send Invoice'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

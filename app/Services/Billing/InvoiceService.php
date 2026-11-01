@@ -7,6 +7,7 @@ namespace App\Services\Billing;
 use App\Enums\InvoiceStatus;
 use App\Events\InvoiceSent;
 use App\Exceptions\InvalidInvoiceTransition;
+use App\Jobs\SendInvoiceEmail;
 use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -121,18 +122,34 @@ class InvoiceService
         });
     }
 
-    public function send(Invoice $invoice): Invoice
+    public function send(Invoice $invoice, ?string $recipientEmail = null, ?string $customMessage = null): Invoice
     {
-        if (! $invoice->status->canTransitionTo(InvoiceStatus::SENT, $invoice->amount_paid)) {
+        $invoice->loadMissing(['client', 'company']);
+
+        $recipient = $recipientEmail ?: $invoice->client?->email;
+        if (! $recipient) {
+            throw new \InvalidArgumentException('Client email is required to send invoice.');
+        }
+
+        if ($invoice->isDraft()) {
+            if (! $invoice->status->canTransitionTo(InvoiceStatus::SENT, $invoice->amount_paid)) {
+                throw InvalidInvoiceTransition::make($invoice->status, InvoiceStatus::SENT);
+            }
+
+            $invoice->update([
+                'status' => InvoiceStatus::SENT,
+                'sent_at' => now(),
+            ]);
+
+            InvoiceSent::dispatch($invoice);
+        } elseif (in_array($invoice->status, [InvoiceStatus::SENT, InvoiceStatus::PARTIALLY_PAID, InvoiceStatus::OVERDUE], true)) {
+            $invoice->update(['sent_at' => now()]);
+            InvoiceSent::dispatch($invoice);
+        } else {
             throw InvalidInvoiceTransition::make($invoice->status, InvoiceStatus::SENT);
         }
 
-        $invoice->update([
-            'status' => InvoiceStatus::SENT,
-            'sent_at' => now(),
-        ]);
-
-        InvoiceSent::dispatch($invoice);
+        SendInvoiceEmail::dispatch($invoice, $recipient, $customMessage);
 
         return $invoice;
     }

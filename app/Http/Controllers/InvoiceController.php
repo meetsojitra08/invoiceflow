@@ -11,6 +11,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Product;
 use App\Services\Billing\InvoiceCalculator;
+use App\Services\Billing\InvoicePdfService;
 use App\Services\Billing\InvoiceService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -176,13 +177,30 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.show', $invoice)->with('success', 'Invoice draft updated.');
     }
 
-    public function send(Invoice $invoice, InvoiceService $service): RedirectResponse
+    public function send(Request $request, Invoice $invoice, InvoiceService $service): RedirectResponse
     {
         $this->authorize('send', $invoice);
 
-        $service->send($invoice);
+        $validated = $request->validate([
+            'recipient_email' => ['nullable', 'email'],
+            'message' => ['nullable', 'string', 'max:2000'],
+        ]);
 
-        return back()->with('success', 'Invoice marked as sent.');
+        $recipient = $validated['recipient_email'] ?? $invoice->client?->email;
+        if (! $recipient) {
+            return back()->withErrors(['recipient_email' => 'Please provide a recipient email address.']);
+        }
+
+        $service->send($invoice, $recipient, $validated['message'] ?? null);
+
+        return back()->with('success', 'Invoice sent successfully.');
+    }
+
+    public function downloadPdf(Invoice $invoice, InvoicePdfService $pdfService): \Illuminate\Http\Response
+    {
+        $this->authorize('view', $invoice);
+
+        return $pdfService->download($invoice);
     }
 
     public function void(Request $request, Invoice $invoice, InvoiceService $service): RedirectResponse
