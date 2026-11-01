@@ -14,6 +14,9 @@ type Props = {
 };
 
 export default function Register({ passwordRules }: Props) {
+    const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const invitationToken = params?.get('invitation_token') ?? '';
+
     return (
         <>
             <Head title="Register" />
@@ -25,6 +28,8 @@ export default function Register({ passwordRules }: Props) {
             >
                 {({ processing, errors }) => (
                     <>
+                        <input type="hidden" name="invitation_token" value={invitationToken} />
+
                         <div className="grid gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Name</Label>
@@ -58,19 +63,21 @@ export default function Register({ passwordRules }: Props) {
                                 <InputError message={errors.email} />
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="company_name">Company name</Label>
-                                <Input
-                                    id="company_name"
-                                    type="text"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="organization"
-                                    name="company_name"
-                                    placeholder="Company or Business name"
-                                />
-                                <InputError message={errors.company_name} />
-                            </div>
+                            {!invitationToken && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="company_name">Company name</Label>
+                                    <Input
+                                        id="company_name"
+                                        type="text"
+                                        required
+                                        tabIndex={3}
+                                        autoComplete="organization"
+                                        name="company_name"
+                                        placeholder="Company or Business name"
+                                    />
+                                    <InputError message={errors.company_name} />
+                                </div>
+                            )}
 
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Password</Label>

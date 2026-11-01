@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -87,5 +88,20 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         }
 
         return $this->roleIn($this->current_company_id);
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->currentRole() === Role::OWNER->value;
+    }
+
+    public function isAccountant(): bool
+    {
+        return $this->currentRole() === Role::ACCOUNTANT->value;
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->currentRole() === Role::STAFF->value;
     }
 }
