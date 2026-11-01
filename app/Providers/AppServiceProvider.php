@@ -8,6 +8,7 @@ use App\Events\PaymentRecorded;
 use App\Listeners\BustDashboardCache;
 use App\Services\Tenancy\TenantManager;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -41,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureDefaults(): void
     {
+        Model::preventLazyLoading(! app()->isProduction());
+
         Date::use(CarbonImmutable::class);
 
         DB::prohibitDestructiveCommands(
