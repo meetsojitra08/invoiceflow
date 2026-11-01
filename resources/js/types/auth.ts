@@ -10,8 +10,30 @@ export type User = {
     [key: string]: unknown;
 };
 
+export type Company = {
+    id: number;
+    name: string;
+    currency: string;
+    tax_number?: string | null;
+    invoice_prefix: string;
+};
+
+export type CompanyMembership = {
+    id: number;
+    name: string;
+    role: string;
+};
+
+export type FlashMessages = {
+    success?: string | null;
+    error?: string | null;
+};
+
 export type Auth = {
     user: User;
+    company: Company | null;
+    companies: CompanyMembership[];
+    role: string | null;
 };
 
 export type Passkey = {

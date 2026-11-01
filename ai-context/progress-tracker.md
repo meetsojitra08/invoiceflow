@@ -4,15 +4,15 @@
 
 ## Status
 - **Current phase:** 1
-- **Current ticket:** IF-2
-- **Last completed:** IF-1
+- **Current ticket:** IF-3
+- **Last completed:** IF-2
 - **Last updated:** 2026-11-01
 
 ## Tickets (`[ ]` todo, `[~]` in progress, `[x]` done)
 
 ### Phase 1: Foundation
 - [x] IF-1 Scaffold
-- [ ] IF-2 Auth, workspaces, tenancy, app shell
+- [x] IF-2 Auth, workspaces, tenancy, app shell
 - [ ] IF-3 Clients and Products
 
 ### Phase 2: Invoicing
@@ -58,4 +58,5 @@
 | | | |
 
 ## Session log
+- 2026-11-01: IF-2 completed. 47 tests passing. Quality gate green. Implemented multi-tenancy (TenantManager, BelongsToCompany), company workspaces with owner membership on registration, company switcher, shared Inertia props, money utilities, shared UI components, and public layout.
 - 2026-11-01: IF-1 completed. 40 tests passing. Quality gate green. Scaffolded Laravel 13 React starter kit with PostgreSQL, Pest, Sanctum, DomPDF, Stripe, Recharts.
