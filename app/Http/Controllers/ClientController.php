@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\InvoiceStatus;
 use App\Http\Requests\Clients\StoreClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\Client;
@@ -58,14 +59,36 @@ class ClientController extends Controller
     {
         $this->authorize('view', $client);
 
+        $invoices = $client->invoices()
+            ->latest('issue_date')
+            ->latest('id')
+            ->get();
+
+        $totalBilled = (int) $invoices
+            ->whereIn('status', [
+                InvoiceStatus::SENT,
+                InvoiceStatus::PARTIALLY_PAID,
+                InvoiceStatus::PAID,
+                InvoiceStatus::OVERDUE,
+            ])
+            ->sum('total');
+
+        $outstandingBalance = (int) $invoices
+            ->whereIn('status', [
+                InvoiceStatus::SENT,
+                InvoiceStatus::PARTIALLY_PAID,
+                InvoiceStatus::OVERDUE,
+            ])
+            ->sum(fn ($invoice) => max(0, $invoice->total - ($invoice->amount_paid ?? 0)));
+
         return Inertia::render('clients/show', [
             'client' => $client,
             'stats' => [
-                'total_billed' => 0,
-                'outstanding_balance' => 0,
-                'invoices_count' => 0,
+                'total_billed' => $totalBilled,
+                'outstanding_balance' => $outstandingBalance,
+                'invoices_count' => $invoices->count(),
             ],
-            'invoices' => [],
+            'invoices' => $invoices,
         ]);
     }
 

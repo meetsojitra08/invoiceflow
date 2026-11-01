@@ -2,12 +2,15 @@ import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft, Edit, FileText, Mail, MapPin, Phone } from 'lucide-react';
 import PageHeader from '@/components/shared/page-header';
 import StatCard from '@/components/shared/stat-card';
+import StatusBadge from '@/components/shared/status-badge';
 import Money from '@/components/shared/money';
 import EmptyState from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { formatDate } from '@/lib/utils';
 import type { Client } from '@/types/client';
+import type { Invoice } from '@/types/invoice';
 
 type Props = {
     client: Client;
@@ -16,7 +19,7 @@ type Props = {
         outstanding_balance: number;
         invoices_count: number;
     };
-    invoices: unknown[];
+    invoices: Invoice[];
 };
 
 export default function ClientsShow({ client, stats, invoices }: Props) {
@@ -122,7 +125,52 @@ export default function ClientsShow({ client, stats, invoices }: Props) {
                                 description="Invoices created for this client will show up here."
                             />
                         ) : (
-                            <div>Invoice list</div>
+                            <div className="overflow-x-auto rounded-lg border border-border">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-muted/50 border-b text-xs uppercase font-medium text-muted-foreground">
+                                        <tr>
+                                            <th className="px-4 py-3">Invoice</th>
+                                            <th className="px-4 py-3">Issue Date</th>
+                                            <th className="px-4 py-3">Due Date</th>
+                                            <th className="px-4 py-3">Status</th>
+                                            <th className="px-4 py-3 text-right">Total</th>
+                                            <th className="px-4 py-3 text-right">Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border">
+                                        {invoices.map((inv) => {
+                                            const balance = Math.max(0, inv.total - (inv.amount_paid || 0));
+                                            return (
+                                                <tr key={inv.id} className="hover:bg-muted/30">
+                                                    <td className="px-4 py-3 font-mono font-medium">
+                                                        <Link
+                                                            href={`/invoices/${inv.id}`}
+                                                            className="text-primary hover:underline"
+                                                        >
+                                                            {inv.number}
+                                                        </Link>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                                                        {formatDate(inv.issue_date)}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                                                        {formatDate(inv.due_date)}
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <StatusBadge status={inv.status} />
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right font-mono font-semibold text-foreground">
+                                                        <Money amount={inv.total} currency={inv.currency} />
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right font-mono font-bold text-foreground">
+                                                        <Money amount={balance} currency={inv.currency} />
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
