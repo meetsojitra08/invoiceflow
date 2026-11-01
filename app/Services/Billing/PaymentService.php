@@ -11,7 +11,7 @@ use App\Events\PaymentRecorded;
 use App\Exceptions\InvalidPaymentException;
 use App\Models\Invoice;
 use App\Models\Payment;
-use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Support\Facades\DB;
 
 class PaymentService
@@ -24,7 +24,7 @@ class PaymentService
         int $amount,
         PaymentMethod|string $method,
         ?string $reference = null,
-        ?Carbon $paidAt = null,
+        ?DateTimeInterface $paidAt = null,
         ?string $notes = null
     ): Payment {
         return DB::transaction(function () use ($invoice, $amount, $method, $reference, $paidAt, $notes): Payment {
@@ -48,7 +48,7 @@ class PaymentService
             }
 
             $methodValue = $method instanceof PaymentMethod ? $method->value : $method;
-            $paidDate = $paidAt ? $paidAt->toDateString() : now()->toDateString();
+            $paidDate = $paidAt ? $paidAt->format('Y-m-d') : now()->toDateString();
 
             $payment = Payment::create([
                 'company_id' => $lockedInvoice->company_id,

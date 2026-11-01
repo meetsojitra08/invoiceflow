@@ -7,13 +7,18 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PublicInvoiceController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 
+Route::post('webhooks/stripe', StripeWebhookController::class)->name('webhooks.stripe');
+
 Route::get('i/{token}', [PublicInvoiceController::class, 'show'])->name('invoices.public');
 Route::get('i/{token}/pdf', [PublicInvoiceController::class, 'downloadPdf'])->name('invoices.public.pdf');
+Route::post('i/{token}/checkout', [PublicInvoiceController::class, 'checkout'])->name('invoices.public.checkout');
+Route::get('i/{token}/payment-success', [PublicInvoiceController::class, 'paymentSuccess'])->name('invoices.public.success');
 Route::get('invitations/{token}/accept', [InvitationController::class, 'show'])->name('invitations.accept');
 Route::post('invitations/{token}/accept', [InvitationController::class, 'accept'])->name('invitations.accept.post');
 

@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, router } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
 import type { Invoice } from '@/types/invoice';
 import Money from '@/components/shared/money';
@@ -11,10 +12,18 @@ interface Props {
 }
 
 export default function PublicInvoicePage({ invoice }: Props) {
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
     const isPaid = invoice.status === 'paid';
     const amountDue = invoice.amount_due ?? Math.max(0, invoice.total - invoice.amount_paid);
     const invoiceNumber = invoice.invoice_number ?? invoice.number;
     const canPay = (invoice.status === 'sent' || invoice.status === 'partially_paid') && amountDue > 0;
+
+    const handleCheckout = () => {
+        setIsCheckingOut(true);
+        router.post(`/i/${invoice.public_token}/checkout`, {}, {
+            onError: () => setIsCheckingOut(false),
+        });
+    };
 
     return (
         <PublicLayout title={`Invoice ${invoiceNumber}`}>
@@ -44,9 +53,15 @@ export default function PublicInvoicePage({ invoice }: Props) {
                             </a>
                         </Button>
                         {canPay && (
-                            <Button size="sm">
+                            <Button size="sm" onClick={handleCheckout} disabled={isCheckingOut}>
                                 <CreditCard className="w-4 h-4 mr-2" />
-                                Pay <Money amount={amountDue} currency={invoice.currency} />
+                                {isCheckingOut ? (
+                                    'Redirecting...'
+                                ) : (
+                                    <>
+                                        Pay <Money amount={amountDue} currency={invoice.currency} />
+                                    </>
+                                )}
                             </Button>
                         )}
                     </div>
